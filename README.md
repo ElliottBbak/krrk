@@ -26,7 +26,31 @@
 | Backend | NestJS + TypeScript |
 | Realtime | Socket.IO |
 | Database | PostgreSQL + TypeORM |
-| 배포 | Railway |
+| 배포 | AWS EC2 (단일 인스턴스) |
+| Monorepo | pnpm workspaces + Turborepo |
+
+---
+
+## 프로젝트 구조
+
+```
+krrk/
+├── apps/
+│   ├── web/          # React 프론트엔드
+│   └── api/          # NestJS 백엔드
+├── packages/
+│   └── shared/       # 공유 타입 + Enum
+└── docs/             # 설계 문서
+```
+
+---
+
+## 실행
+
+```bash
+pnpm install
+pnpm dev        # web + api 동시 실행
+```
 
 ---
 
@@ -34,15 +58,17 @@
 
 | 문서 | 설명 |
 |---|---|
-| `docs/KRRK_Vision.docx` | 서비스 비전 |
-| `docs/KRRK_Product_Master_PRD.docx` | 제품 요구사항 정의서 |
-| `docs/KRRK_Challenge_Lifecycle_Bible.docx` | 챌린지 라이프사이클 |
-| `docs/KRRK_Group_Lifecycle_Bible.docx` | 그룹 라이프사이클 |
-| `docs/KRRK_Game_Design_Bible.docx` | 게임 설계 문서 |
-| `docs/KRRK_Roadmap.docx` | 개발 로드맵 |
-| `docs/krrk_userflow.html` | 유저 플로우 (브라우저에서 열기) |
-| `docs/krrk_erd.html` | ERD & 데이터베이스 스키마 (브라우저에서 열기) |
-| `docs/krrk_api.html` | API Spec (브라우저에서 열기) |
+| [Vision](docs/1_KRRK_Vision.md) | 서비스 비전 |
+| [Product Master PRD](docs/2_KRRK_Product_Master_PRD.md) | 제품 요구사항 정의서 |
+| [Roadmap](docs/3_KRRK_Roadmap.md) | 개발 로드맵 |
+| [Group Lifecycle](docs/4_KRRK_Group_Lifecycle_Bible.md) | 그룹 라이프사이클 |
+| [Game Design Bible](docs/5_KRRK_Game_Design_Bible.md) | 게임 설계 문서 |
+| [Challenge Lifecycle](docs/6_KRRK_Challenge_Lifecycle_Bible.md) | 챌린지 라이프사이클 |
+| [User Flow](docs/krrk_userflow.html) | 유저 플로우 |
+| [ERD](docs/krrk_erd.html) | ERD & 데이터베이스 스키마 |
+| [API Spec](docs/krrk_api.html) | API 명세 |
+| [Infra Architecture](docs/krrk_infra.html) | 인프라 아키텍처 |
+| [SW Architecture](docs/krrk_sw_arch.html) | 소프트웨어 아키텍처 |
 
 ---
 
