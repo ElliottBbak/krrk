@@ -1,73 +1,47 @@
-# React + TypeScript + Vite
+# @krrk/web
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+KRRK 프론트엔드. React + Vite + TypeScript.
 
-Currently, two official plugins are available:
+## 기술 스택
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+| 역할 | 라이브러리 |
+|---|---|
+| UI | React 19 + TypeScript |
+| 번들러 | Vite |
+| 라우팅 | React Router v7 |
+| 실시간 상태 | Zustand |
+| 서버 데이터 | TanStack Query v5 |
+| 소켓 | Socket.IO Client |
+| 게임 물리 | Matter.js + seedrandom |
+| 이미지 생성 | html-to-image |
 
-## React Compiler
+## 디렉토리 구조
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```
+src/
+├── pages/          # 라우트별 페이지 컴포넌트
+├── components/     # 공통 UI 컴포넌트
+├── stores/         # Zustand 스토어 (게임 실시간 상태, 인증)
+├── hooks/          # TanStack Query 훅 (서버 데이터 패칭)
+├── socket/         # Socket.IO 클라이언트 + 이벤트 핸들러
+└── games/          # 게임별 엔진 (구슬 레이스: Matter.js)
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## 실행
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+루트에서 실행 권장:
+```bash
+# 루트에서
+pnpm dev
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+# 이 앱만
+pnpm --filter @krrk/web dev
+```
+
+## 환경 변수
+
+```bash
+# .env.local
+VITE_API_URL=http://localhost:3000
+VITE_SOCKET_URL=http://localhost:3000
 ```
