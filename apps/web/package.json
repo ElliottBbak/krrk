@@ -12,6 +12,7 @@
   "dependencies": {
     "@krrk/shared": "workspace:*",
     "@tanstack/react-query": "^5.80.7",
+    "axios": "^1.17.0",
     "html-to-image": "^1.11.11",
     "react": "^19.2.6",
     "react-dom": "^19.2.6",
