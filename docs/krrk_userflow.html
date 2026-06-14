@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KRRK User Flow</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Arial', sans-serif; background: #f8fafc; color: #1e293b; font-size: 13px; }
+
+  .cover { background: #111827; color: white; padding: 60px 80px; min-height: 200px; }
+  .cover h1 { font-size: 48px; font-weight: 900; letter-spacing: -1px; }
+  .cover h2 { font-size: 24px; font-weight: 400; color: #9ca3af; margin-top: 8px; }
+  .cover .meta { font-size: 14px; color: #6b7280; margin-top: 16px; }
+
+  .section { padding: 48px 80px; border-bottom: 1px solid #e2e8f0; page-break-before: always; }
+  .section:first-of-type { page-break-before: avoid; }
+
+  .section-title { font-size: 22px; font-weight: 800; color: #111827; margin-bottom: 6px; }
+  .section-sub { font-size: 13px; color: #6b7280; margin-bottom: 32px; }
+
+  /* FLOW CHART */
+  .flow { display: flex; align-items: flex-start; gap: 0; flex-wrap: nowrap; margin-bottom: 32px; overflow-x: auto; }
+  .flow-step { display: flex; flex-direction: column; align-items: center; min-width: 110px; }
+  .flow-box { background: white; border: 2px solid #2563eb; border-radius: 10px; padding: 10px 12px; text-align: center; font-size: 11px; font-weight: 700; color: #1e40af; min-width: 90px; line-height: 1.4; }
+  .flow-box.decision { background: #fffbeb; border-color: #d97706; color: #92400e; border-radius: 4px; transform: rotate(0deg); }
+  .flow-box.action { background: #f0fdf4; border-color: #059669; color: #065f46; }
+  .flow-box.end { background: #fef2f2; border-color: #dc2626; color: #991b1b; }
+  .flow-box.system { background: #f5f3ff; border-color: #7c3aed; color: #4c1d95; }
+  .flow-arrow { display: flex; align-items: center; color: #94a3b8; font-size: 18px; padding: 0 4px; margin-top: 20px; }
+  .flow-label { font-size: 10px; color: #6b7280; margin-top: 4px; text-align: center; max-width: 90px; }
+
+  .flow-branch { display: flex; flex-direction: column; gap: 8px; }
+  .flow-branch-row { display: flex; align-items: center; gap: 0; }
+
+  /* STEP TABLE */
+  .steps { width: 100%; border-collapse: collapse; margin-top: 8px; }
+  .steps th { background: #eff6ff; color: #2563eb; font-size: 11px; font-weight: 700; padding: 8px 12px; text-align: left; border: 1px solid #e2e8f0; }
+  .steps td { padding: 8px 12px; border: 1px solid #e2e8f0; vertical-align: top; line-height: 1.5; }
+  .steps tr:nth-child(even) td { background: #f8fafc; }
+  .steps .step-num { font-weight: 700; color: #2563eb; width: 40px; }
+  .steps .step-screen { color: #7c3aed; font-weight: 600; width: 120px; }
+  .steps .step-action { }
+  .steps .step-note { color: #6b7280; font-size: 11px; width: 180px; }
+
+  .tag { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 10px; font-weight: 700; margin-right: 4px; }
+  .tag-blue { background: #dbeafe; color: #1d4ed8; }
+  .tag-green { background: #d1fae5; color: #065f46; }
+  .tag-orange { background: #fed7aa; color: #9a3412; }
+  .tag-red { background: #fee2e2; color: #991b1b; }
+  .tag-purple { background: #ede9fe; color: #5b21b6; }
+
+  .callout { background: #eff6ff; border-left: 4px solid #2563eb; padding: 12px 16px; margin: 16px 0; border-radius: 0 8px 8px 0; font-size: 12px; color: #1e40af; line-height: 1.6; }
+  .callout.orange { background: #fffbeb; border-color: #d97706; color: #92400e; }
+  .callout.green { background: #f0fdf4; border-color: #059669; color: #065f46; }
+
+  .divider { border: none; border-top: 2px solid #e2e8f0; margin: 28px 0; }
+
+  .flow-group { display: flex; flex-direction: column; gap: 4px; align-items: center; }
+
+  .page-title { font-size: 15px; font-weight: 800; color: #374151; margin-bottom: 20px; padding-bottom: 8px; border-bottom: 2px solid #2563eb; display: inline-block; }
+</style>
+</head>
+<body>
+
+<!-- COVER -->
+<div class="cover">
+  <h1>KRRK</h1>
+  <h2>User Flow Document</h2>
+  <div class="meta">v1.0 · 2025</div>
+</div>
+
+<!-- ==================== FLOW 1A ==================== -->
+<div class="section">
+  <div class="section-title">Flow 1A — 그룹 생성 (링크 하나 공유)</div>
+  <div class="section-sub">인원 미확정 시. 링크 하나를 단톡방에 공유. 각자 닉네임 입력 후 입장.</div>
+
+  <!-- FLOWCHART -->
+  <div class="flow">
+    <div class="flow-step">
+      <div class="flow-box">KRRK 접속</div>
+      <div class="flow-label">krrk.io</div>
+    </div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step">
+      <div class="flow-box action">그룹 생성</div>
+      <div class="flow-label">이름 입력</div>
+    </div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step">
+      <div class="flow-box system">링크 생성</div>
+      <div class="flow-label">유효기간 선택</div>
+    </div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step">
+      <div class="flow-box action">단톡방 공유</div>
+      <div class="flow-label">링크 하나</div>
+    </div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step">
+      <div class="flow-box">링크 클릭</div>
+      <div class="flow-label">멤버들</div>
+    </div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step">
+      <div class="flow-box action">닉네임 입력</div>
+      <div class="flow-label">게스트 입장</div>
+    </div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step">
+      <div class="flow-box action">그룹 홈</div>
+      <div class="flow-label">입장 완료</div>
+    </div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step">
+      <div class="flow-box system">개인 토큰 발급</div>
+      <div class="flow-label">카카오 저장</div>
+    </div>
+  </div>
+
+  <div class="callout green">링크 하나 → 단톡방 공유 → 각자 닉네임 입력. 30초 이내 전원 입장 완료.</div>
+
+  <!-- STEP TABLE -->
+  <table class="steps">
+    <tr><th>#</th><th>화면</th><th>액션</th><th>비고</th></tr>
+    <tr><td class="step-num">1</td><td class="step-screen">랜딩</td><td>krrk.io 접속 → '그룹 만들기' 탭</td><td></td></tr>
+    <tr><td class="step-num">2</td><td class="step-screen">그룹 생성</td><td>그룹 이름 입력 → 생성</td><td>30초 이내</td></tr>
+    <tr><td class="step-num">3</td><td class="step-screen">초대링크</td><td>유효기간 선택 (24시간 / 7일) → 링크 복사 또는 카카오 공유</td><td>단톡방에 공유</td></tr>
+    <tr><td class="step-num">4</td><td class="step-screen">입장 (멤버)</td><td>링크 클릭 → 브라우저 열림 → 닉네임 입력</td><td>설치 없음</td></tr>
+    <tr><td class="step-num">5</td><td class="step-screen">그룹 홈</td><td>입장 완료. 활성 챌린지 확인 가능.</td><td></td></tr>
+    <tr><td class="step-num">6</td><td class="step-screen">토큰 발급</td><td>게임 후 '다음에도 나로 입장하려면 이 링크 저장' 안내 → 카카오 나한테 보내기</td><td>재입장용</td></tr>
+  </table>
+</div>
+
+<!-- ==================== FLOW 1B ==================== -->
+<div class="section">
+  <div class="section-title">Flow 1B — 그룹 생성 (개인 링크 생성)</div>
+  <div class="section-sub">인원 확정 시. 이름 미리 등록 → 개인 링크 생성 → 본인 확인 후 즉시 입장. 닉네임 입력 없음.</div>
+
+  <div class="flow">
+    <div class="flow-step">
+      <div class="flow-box">KRRK 접속</div>
+    </div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step">
+      <div class="flow-box action">그룹 생성</div>
+      <div class="flow-label">이름 + 참여자 등록</div>
+    </div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step">
+      <div class="flow-box system">개인 링크 생성</div>
+      <div class="flow-label">참여자별 URL</div>
+    </div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step">
+      <div class="flow-box action">단톡방 공유</div>
+      <div class="flow-label">전체 링크 목록</div>
+    </div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step">
+      <div class="flow-box">본인 링크 클릭</div>
+    </div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step">
+      <div class="flow-box decision">철수 맞습니까?</div>
+    </div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step">
+      <div class="flow-box action">즉시 입장</div>
+      <div class="flow-label">닉네임 입력 없음</div>
+    </div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step">
+      <div class="flow-box action">그룹 홈</div>
+    </div>
+  </div>
+
+  <div class="callout green">개인 링크 자체가 식별자. 닉네임 입력 단계 없음. 가장 빠른 입장 방식.</div>
+  <div class="callout orange">잘못된 링크 클릭 시 → '이 링크는 영희용입니다. 철수 링크로 다시 입장해주세요' 안내.</div>
+
+  <table class="steps">
+    <tr><th>#</th><th>화면</th><th>액션</th><th>비고</th></tr>
+    <tr><td class="step-num">1</td><td class="step-screen">랜딩</td><td>krrk.io 접속 → '그룹 만들기' 탭</td><td></td></tr>
+    <tr><td class="step-num">2</td><td class="step-screen">그룹 생성</td><td>그룹 이름 + 참여자 이름 전원 입력 → 생성</td><td>인원 확정 시</td></tr>
+    <tr><td class="step-num">3</td><td class="step-screen">개인 링크</td><td>참여자별 개인 URL 자동 생성. 전체 목록 단톡방 공유.</td><td>철수→aaa1, 영희→aaa2</td></tr>
+    <tr><td class="step-num">4</td><td class="step-screen">본인 확인</td><td>각자 자기 이름 링크 클릭 → '철수가 맞습니까?' 확인</td><td></td></tr>
+    <tr><td class="step-num">5</td><td class="step-screen">그룹 홈</td><td>즉시 입장. 닉네임 입력 없음.</td><td>개인 링크 = 식별자</td></tr>
+    <tr><td class="step-num">6</td><td class="step-screen">잘못된 링크</td><td>'이 링크는 영희용입니다' 안내 → 올바른 링크 재접속</td><td>오류 처리</td></tr>
+  </table>
+</div>
+
+<!-- ==================== FLOW 2A ==================== -->
+<div class="section">
+  <div class="section-title">Flow 2A — 단판 챌린지 × 꼴찌 벌칙</div>
+  <div class="section-sub">술자리 즉흥. 지금 이 자리에서 한 판. 꼴찌가 벌칙 이행.</div>
+
+  <div class="flow">
+    <div class="flow-step">
+      <div class="flow-box">그룹 홈</div>
+    </div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step">
+      <div class="flow-box action">챌린지 제안</div>
+      <div class="flow-label">누구나 가능</div>
+    </div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step">
+      <div class="flow-box action">항목 입력</div>
+      <div class="flow-label">단판·꼴찌·게임·벌칙</div>
+    </div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step">
+      <div class="flow-box system">즉시 시작</div>
+      <div class="flow-label">전원 자동 참여</div>
+    </div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step">
+      <div class="flow-box action">게임 실행</div>
+      <div class="flow-label">30초 이내</div>
+    </div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step">
+      <div class="flow-box end">결과 공개</div>
+      <div class="flow-label">꼴찌 확정</div>
+    </div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step">
+      <div class="flow-box system">카드 공유</div>
+      <div class="flow-label">단톡방</div>
+    </div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step">
+      <div class="flow-box action">벌칙 이행</div>
+      <div class="flow-label">꼴찌가 실행</div>
+    </div>
+  </div>
+
+  <div class="callout">제안 즉시 시작. 수락 절차 없음. 그룹 전체 자동 참여.</div>
+
+  <table class="steps">
+    <tr><th>#</th><th>화면</th><th>액션</th><th>비고</th></tr>
+    <tr><td class="step-num">1</td><td class="step-screen">그룹 홈</td><td>'챌린지 제안' 탭</td><td>누구나 가능</td></tr>
+    <tr><td class="step-num">2</td><td class="step-screen">챌린지 설정</td><td>기간: 단판 / 유형: 꼴찌 벌칙 / 게임 선택 / 벌칙 내용 입력 / 공개 방식: 실시간</td><td>구슬·폭탄·타이머 모두 가능</td></tr>
+    <tr><td class="step-num">3</td><td class="step-screen">게임 대기</td><td>제안 즉시 시작. 전원 화면에 게임 대기 화면 표시.</td><td>수락 불필요</td></tr>
+    <tr><td class="step-num">4</td><td class="step-screen">게임 진행</td><td>게임 실행. 모든 화면에 실시간 표시.</td><td>30초 이내</td></tr>
+    <tr><td class="step-num">5</td><td class="step-screen">결과 화면</td><td>꼴찌 확정. '긁혔다 💣' 연출. 순위표 공개.</td><td>드라마틱하게</td></tr>
+    <tr><td class="step-num">6</td><td class="step-screen">공유</td><td>결과 카드 단톡방 공유 가능.</td><td>캡처용</td></tr>
+    <tr><td class="step-num">7</td><td class="step-screen">완료</td><td>꼴찌가 벌칙 이행. 챌린지 종료. 기록 저장.</td><td></td></tr>
+  </table>
+</div>
+
+<!-- ==================== FLOW 2B ==================== -->
+<div class="section">
+  <div class="section-title">Flow 2B — 단판 챌린지 × 1등 베네핏</div>
+  <div class="section-sub">1등이 혜택을 가져가는 구조. 폭탄 게임 선택 불가.</div>
+
+  <div class="flow">
+    <div class="flow-step">
+      <div class="flow-box">그룹 홈</div>
+    </div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step">
+      <div class="flow-box action">챌린지 제안</div>
+    </div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step">
+      <div class="flow-box action">항목 입력</div>
+      <div class="flow-label">단판·1등·게임·베네핏</div>
+    </div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step">
+      <div class="flow-box system">즉시 시작</div>
+    </div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step">
+      <div class="flow-box action">게임 실행</div>
+      <div class="flow-label">구슬·타이머만</div>
+    </div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step">
+      <div class="flow-box action">결과 공개</div>
+      <div class="flow-label">1등 확정</div>
+    </div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step">
+      <div class="flow-box system">카드 공유</div>
+    </div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step">
+      <div class="flow-box action">베네핏 수령</div>
+      <div class="flow-label">1등이 혜택</div>
+    </div>
+  </div>
+
+  <div class="callout orange">1등 베네핏 선택 시 폭탄 게임 비활성화. 구슬 레이스 / 타이머 게임만 선택 가능.</div>
+
+  <table class="steps">
+    <tr><th>#</th><th>화면</th><th>액션</th><th>비고</th></tr>
+    <tr><td class="step-num">1</td><td class="step-screen">그룹 홈</td><td>'챌린지 제안' 탭</td><td></td></tr>
+    <tr><td class="step-num">2</td><td class="step-screen">챌린지 설정</td><td>기간: 단판 / 유형: 1등 베네핏 / 게임 선택 / 베네핏 내용 입력</td><td>폭탄 게임 비활성화</td></tr>
+    <tr><td class="step-num">3</td><td class="step-screen">게임 진행</td><td>제안 즉시 시작. 게임 실행.</td><td></td></tr>
+    <tr><td class="step-num">4</td><td class="step-screen">결과 화면</td><td>1등 확정. '긁었다 🏆' 연출. 순위표 공개.</td><td></td></tr>
+    <tr><td class="step-num">5</td><td class="step-screen">완료</td><td>1등이 베네핏 수령. 챌린지 종료.</td><td></td></tr>
+  </table>
+</div>
+
+<!-- ==================== FLOW 3A ==================== -->
+<div class="section">
+  <div class="section-title">Flow 3A — 1주/1달 챌린지 × 꼴찌 벌칙</div>
+  <div class="section-sub">시즌 누적. 히든 랭킹. 기간 종료 후 독박왕 공개.</div>
+
+  <div class="flow">
+    <div class="flow-step">
+      <div class="flow-box action">챌린지 제안</div>
+      <div class="flow-label">1주/1달·꼴찌</div>
+    </div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step">
+      <div class="flow-box system">시즌 시작</div>
+      <div class="flow-label">전원 자동 참여</div>
+    </div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step">
+      <div class="flow-box action">매일 게임</div>
+      <div class="flow-label">알림 발송</div>
+    </div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step">
+      <div class="flow-box system">결과 누적</div>
+      <div class="flow-label">히든 랭킹</div>
+    </div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step">
+      <div class="flow-box decision">기간 종료?</div>
+    </div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step">
+      <div class="flow-box end">독박왕 공개</div>
+      <div class="flow-label">드라마틱하게</div>
+    </div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step">
+      <div class="flow-box system">카드 공유</div>
+    </div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step">
+      <div class="flow-box action">다음 시즌</div>
+    </div>
+  </div>
+
+  <div class="callout">히든 랭킹: 기간 중 순위 비공개. 본인 상태만 확인 가능 (안전권 / 위험권 / 매우 위험).</div>
+  <div class="callout orange">미참여일 = 자동 패배. 단순하게 간다. 친구들끼리니까.</div>
+
+  <table class="steps">
+    <tr><th>#</th><th>화면</th><th>액션</th><th>비고</th></tr>
+    <tr><td class="step-num">1</td><td class="step-screen">챌린지 설정</td><td>기간: 1주/1달 / 유형: 꼴찌 벌칙 / 게임 선택 / 벌칙 입력 / 공개: 종료 후</td><td></td></tr>
+    <tr><td class="step-num">2</td><td class="step-screen">시즌 시작</td><td>제안 즉시 시작. 그룹 홈에 활성 챌린지 표시.</td><td>전원 자동 참여</td></tr>
+    <tr><td class="step-num">3</td><td class="step-screen">게임 알림</td><td>매일 게임 알림 발송. 참여 가능.</td><td>미참여 = 자동 패배</td></tr>
+    <tr><td class="step-num">4</td><td class="step-screen">히든 랭킹</td><td>본인 상태만 확인 가능. 구체적 순위 비공개.</td><td>안전권·위험권·매우위험</td></tr>
+    <tr><td class="step-num">5</td><td class="step-screen">기간 종료</td><td>기간 종료 시점에 결과 계산.</td><td></td></tr>
+    <tr><td class="step-num">6</td><td class="step-screen">독박왕 공개</td><td>드라마틱한 순위 공개 연출. 독박왕 확정. 결과 카드 생성.</td><td>이벤트여야 한다</td></tr>
+    <tr><td class="step-num">7</td><td class="step-screen">공유 & 다음</td><td>결과 단톡방 공유. 다음 시즌 제안 유도.</td><td>북극성 지표</td></tr>
+  </table>
+</div>
+
+<!-- ==================== FLOW 3B ==================== -->
+<div class="section">
+  <div class="section-title">Flow 3B — 1주/1달 챌린지 × 1등 베네핏</div>
+  <div class="section-sub">시즌 내내 1등 경쟁. 기간 종료 후 최다 1등자가 베네핏 수령.</div>
+
+  <div class="flow">
+    <div class="flow-step">
+      <div class="flow-box action">챌린지 제안</div>
+      <div class="flow-label">1주/1달·1등</div>
+    </div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step">
+      <div class="flow-box system">시즌 시작</div>
+    </div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step">
+      <div class="flow-box action">매일 게임</div>
+      <div class="flow-label">구슬·타이머만</div>
+    </div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step">
+      <div class="flow-box system">1등 누적</div>
+      <div class="flow-label">히든 랭킹</div>
+    </div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step">
+      <div class="flow-box decision">기간 종료?</div>
+    </div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step">
+      <div class="flow-box action">1등왕 공개</div>
+      <div class="flow-label">최다 1등자</div>
+    </div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step">
+      <div class="flow-box action">베네핏 수령</div>
+    </div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step">
+      <div class="flow-box action">다음 시즌</div>
+    </div>
+  </div>
+
+  <table class="steps">
+    <tr><th>#</th><th>화면</th><th>액션</th><th>비고</th></tr>
+    <tr><td class="step-num">1</td><td class="step-screen">챌린지 설정</td><td>기간: 1주/1달 / 유형: 1등 베네핏 / 게임: 구슬·타이머 / 베네핏 입력</td><td>폭탄 비활성화</td></tr>
+    <tr><td class="step-num">2</td><td class="step-screen">시즌 중</td><td>매일 게임. 1등 횟수 누적. 히든 랭킹 유지.</td><td></td></tr>
+    <tr><td class="step-num">3</td><td class="step-screen">종료 공개</td><td>최다 1등자 확정. 베네핏 수령 연출.</td><td></td></tr>
+    <tr><td class="step-num">4</td><td class="step-screen">다음 시즌</td><td>결과 공유. 다음 챌린지 제안 유도.</td><td></td></tr>
+  </table>
+</div>
+
+<!-- ==================== FLOW 4 ==================== -->
+<div class="section">
+  <div class="section-title">Flow 4 — 재입장 (개인 토큰 링크)</div>
+  <div class="section-sub">며칠 후 같은 그룹에 다시 들어오는 경우. 저장해둔 개인 링크로 이전 참여자로 자동 인식.</div>
+
+  <div class="flow">
+    <div class="flow-step">
+      <div class="flow-box">개인 링크 클릭</div>
+      <div class="flow-label">카카오 저장해둔 링크</div>
+    </div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step">
+      <div class="flow-box system">토큰 인식</div>
+      <div class="flow-label">이전 참여자 확인</div>
+    </div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step">
+      <div class="flow-box action">그룹 홈</div>
+      <div class="flow-label">즉시 입장</div>
+    </div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step">
+      <div class="flow-box action">활성 챌린지</div>
+      <div class="flow-label">게임 참여</div>
+    </div>
+  </div>
+
+  <div class="callout green">닉네임 입력 없음. 로그인 없음. 링크 하나로 이전 기록 그대로 이어짐.</div>
+  <div class="callout orange">링크 분실 시 → 방식 A 링크로 재입장 후 닉네임 입력. 기존 기록과 수동 연동 필요.</div>
+
+  <table class="steps">
+    <tr><th>#</th><th>화면</th><th>액션</th><th>비고</th></tr>
+    <tr><td class="step-num">1</td><td class="step-screen">개인 링크</td><td>카카오 나한테 보내기로 저장해둔 링크 클릭</td><td>브라우저에서 바로</td></tr>
+    <tr><td class="step-num">2</td><td class="step-screen">자동 인식</td><td>토큰 확인 → 이전 참여자로 즉시 인식</td><td>로그인 없음</td></tr>
+    <tr><td class="step-num">3</td><td class="step-screen">그룹 홈</td><td>입장 완료. 활성 챌린지 및 기존 기록 확인.</td><td></td></tr>
+    <tr><td class="step-num">4</td><td class="step-screen">게임</td><td>바로 게임 참여 가능.</td><td></td></tr>
+  </table>
+</div>
+
+<!-- ==================== FLOW 5 ==================== -->
+<div class="section">
+  <div class="section-title">Flow 5 — 시즌 종료 & 독박왕 공개</div>
+  <div class="section-sub">1주/1달 챌린지 종료 시점. 드라마틱한 공개가 핵심.</div>
+
+  <div class="flow">
+    <div class="flow-step">
+      <div class="flow-box system">기간 종료</div>
+      <div class="flow-label">자동 감지</div>
+    </div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step">
+      <div class="flow-box system">결과 계산</div>
+    </div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step">
+      <div class="flow-box system">푸시 알림</div>
+      <div class="flow-label">전원에게</div>
+    </div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step">
+      <div class="flow-box end">순위 공개 연출</div>
+      <div class="flow-label">드라마틱하게</div>
+    </div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step">
+      <div class="flow-box end">독박왕 확정</div>
+    </div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step">
+      <div class="flow-box system">기록 저장</div>
+      <div class="flow-label">그룹 타임라인</div>
+    </div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step">
+      <div class="flow-box system">카드 생성</div>
+      <div class="flow-label">공유 가능</div>
+    </div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step">
+      <div class="flow-box action">다음 시즌 유도</div>
+    </div>
+  </div>
+
+  <div class="callout">시즌 공개는 이벤트여야 한다. 순위를 한꺼번에 터뜨리는 연출이 핵심.</div>
+
+  <table class="steps">
+    <tr><th>#</th><th>화면</th><th>액션</th><th>비고</th></tr>
+    <tr><td class="step-num">1</td><td class="step-screen">알림</td><td>기간 종료 → 전원에게 '결과가 공개됩니다' 푸시 알림</td><td>이벤트 분위기</td></tr>
+    <tr><td class="step-num">2</td><td class="step-screen">공개 연출</td><td>순위를 하나씩 드라마틱하게 공개. 꼴찌/1등 마지막에.</td><td>긴장감 극대화</td></tr>
+    <tr><td class="step-num">3</td><td class="step-screen">독박왕 확정</td><td>'긁혔다 👑' 연출. 독박왕 닉네임 크게 표시.</td><td></td></tr>
+    <tr><td class="step-num">4</td><td class="step-screen">기록 저장</td><td>그룹 타임라인에 시즌 기록 자동 저장. 업적 반영.</td><td>역사 누적</td></tr>
+    <tr><td class="step-num">5</td><td class="step-screen">결과 카드</td><td>시즌 결과 카드 생성. 단톡방 공유 버튼.</td><td>캡처용</td></tr>
+    <tr><td class="step-num">6</td><td class="step-screen">다음 시즌</td><td>'다음 시즌 시작하기' 유도. 북극성 지표.</td><td></td></tr>
+  </table>
+</div>
+
+</body>
+</html>

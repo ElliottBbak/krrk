@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<title>KRRK API Spec</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Arial', sans-serif; background: #0f172a; color: #e2e8f0; font-size: 13px; padding: 40px; }
+
+  h1 { font-size: 36px; font-weight: 900; color: white; margin-bottom: 6px; }
+  .subtitle { color: #64748b; font-size: 14px; margin-bottom: 48px; }
+  .section-title { font-size: 18px; font-weight: 800; color: #60a5fa; margin: 48px 0 20px; padding-bottom: 8px; border-bottom: 1px solid #1e3a5f; }
+
+  /* ENDPOINT CARD */
+  .endpoint { background: #1e293b; border: 1px solid #334155; border-radius: 10px; margin-bottom: 16px; overflow: hidden; }
+  .endpoint-header { display: flex; align-items: center; gap: 12px; padding: 12px 16px; border-bottom: 1px solid #0f172a; }
+  .method { font-size: 11px; font-weight: 800; padding: 3px 10px; border-radius: 4px; min-width: 56px; text-align: center; }
+  .method.get { background: #064e3b; color: #34d399; }
+  .method.post { background: #1e3a5f; color: #60a5fa; }
+  .method.patch { background: #3b1f00; color: #fbbf24; }
+  .method.delete { background: #3b0d0d; color: #f87171; }
+  .path { font-size: 13px; font-weight: 700; color: #e2e8f0; font-family: 'Courier New', monospace; }
+  .desc { font-size: 12px; color: #64748b; margin-left: auto; }
+  .auth-tag { font-size: 10px; padding: 2px 8px; border-radius: 4px; background: #1e3a5f; color: #93c5fd; }
+
+  .endpoint-body { padding: 12px 16px; display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .endpoint-body.single { grid-template-columns: 1fr; }
+
+  .param-section { }
+  .param-title { font-size: 10px; font-weight: 700; color: #64748b; text-transform: uppercase; margin-bottom: 8px; }
+  .param-row { display: flex; gap: 8px; margin-bottom: 5px; align-items: flex-start; }
+  .param-name { font-family: 'Courier New', monospace; font-size: 11px; color: #fbbf24; min-width: 160px; }
+  .param-type { font-size: 11px; color: #a78bfa; min-width: 80px; }
+  .param-req { font-size: 10px; color: #f87171; min-width: 30px; }
+  .param-desc { font-size: 11px; color: #94a3b8; }
+
+  .response-box { background: #0f172a; border-radius: 6px; padding: 10px 12px; font-family: 'Courier New', monospace; font-size: 11px; color: #34d399; line-height: 1.6; }
+
+  .callout { background: #1e3a5f; border-left: 3px solid #2563eb; padding: 10px 14px; border-radius: 0 6px 6px 0; font-size: 12px; color: #93c5fd; line-height: 1.6; margin-bottom: 16px; }
+  .callout.orange { background: #3b1f00; border-color: #d97706; color: #fcd34d; }
+  .callout.green { background: #052e16; border-color: #059669; color: #6ee7b7; }
+
+  .socket-section { background: #1e293b; border: 1px solid #334155; border-radius: 10px; padding: 16px; margin-bottom: 16px; }
+  .socket-title { font-size: 13px; font-weight: 700; color: #34d399; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+  .socket-dir { font-size: 10px; background: #064e3b; color: #34d399; padding: 2px 8px; border-radius: 4px; }
+  .event-name { font-family: 'Courier New', monospace; font-size: 12px; color: #fbbf24; }
+  .event-payload { background: #0f172a; border-radius: 6px; padding: 8px 12px; font-family: 'Courier New', monospace; font-size: 11px; color: #94a3b8; line-height: 1.6; margin-top: 6px; margin-bottom: 12px; }
+
+  .phase-tag { display: inline-block; font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 4px; margin-left: 8px; }
+  .p1 { background: #1e3a5f; color: #60a5fa; }
+  .p2 { background: #3b1f00; color: #fbbf24; }
+  .p3 { background: #2e1065; color: #c4b5fd; }
+  .p4 { background: #052e16; color: #6ee7b7; }
+</style>
+</head>
+<body>
+
+<h1>KRRK</h1>
+<div class="subtitle">API Specification · NestJS REST + Socket.IO · v1.0 · 2025</div>
+
+<div class="callout">Base URL: https://api.krrk.io · 모든 응답 형식: { data, message, statusCode } · 인증: Authorization: Bearer {token}</div>
+
+<!-- ==================== AUTH ==================== -->
+<div class="section-title">Auth API <span class="phase-tag p1">Phase 1</span></div>
+
+<div class="endpoint">
+  <div class="endpoint-header">
+    <span class="method post">POST</span>
+    <span class="path">/auth/guest</span>
+    <span class="desc">게스트 입장 — 닉네임 입력 → 개인 토큰 발급</span>
+  </div>
+  <div class="endpoint-body">
+    <div class="param-section">
+      <div class="param-title">Request Body</div>
+      <div class="param-row"><span class="param-name">nickname</span><span class="param-type">string</span><span class="param-req">필수</span><span class="param-desc">최대 30자</span></div>
+      <div class="param-row"><span class="param-name">inviteToken</span><span class="param-type">string</span><span class="param-req">선택</span><span class="param-desc">초대링크 토큰. 있으면 그룹 자동 입장</span></div>
+    </div>
+    <div class="param-section">
+      <div class="param-title">Response</div>
+      <div class="response-box">{ userId, accessToken, personalToken,<br>  personalLink: "https://krrk.io/u/{token}" }</div>
+    </div>
+  </div>
+</div>
+
+<div class="endpoint">
+  <div class="endpoint-header">
+    <span class="method post">POST</span>
+    <span class="path">/auth/token</span>
+    <span class="desc">개인 토큰으로 재입장</span>
+  </div>
+  <div class="endpoint-body">
+    <div class="param-section">
+      <div class="param-title">Request Body</div>
+      <div class="param-row"><span class="param-name">personalToken</span><span class="param-type">string</span><span class="param-req">필수</span><span class="param-desc">카카오 저장해둔 개인 토큰</span></div>
+    </div>
+    <div class="param-section">
+      <div class="param-title">Response</div>
+      <div class="response-box">{ userId, accessToken, nickname,<br>  groups: [{ id, name, status }] }</div>
+    </div>
+  </div>
+</div>
+
+<div class="endpoint">
+  <div class="endpoint-header">
+    <span class="method post">POST</span>
+    <span class="path">/auth/social</span>
+    <span class="desc">카카오/구글 소셜 로그인 <span class="phase-tag p4">Phase 4</span></span>
+  </div>
+  <div class="endpoint-body">
+    <div class="param-section">
+      <div class="param-title">Request Body</div>
+      <div class="param-row"><span class="param-name">provider</span><span class="param-type">string</span><span class="param-req">필수</span><span class="param-desc">KAKAO | GOOGLE</span></div>
+      <div class="param-row"><span class="param-name">accessToken</span><span class="param-type">string</span><span class="param-req">필수</span><span class="param-desc">소셜 액세스 토큰</span></div>
+      <div class="param-row"><span class="param-name">mergeToken</span><span class="param-type">string</span><span class="param-req">선택</span><span class="param-desc">게스트 기록 병합용 개인 토큰</span></div>
+    </div>
+    <div class="param-section">
+      <div class="param-title">Response</div>
+      <div class="response-box">{ userId, accessToken, isNewUser }</div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== GROUPS ==================== -->
+<div class="section-title">Groups API <span class="phase-tag p1">Phase 1</span></div>
+
+<div class="endpoint">
+  <div class="endpoint-header">
+    <span class="method post">POST</span>
+    <span class="path">/groups</span>
+    <span class="desc">그룹 생성</span>
+    <span class="auth-tag">auth</span>
+  </div>
+  <div class="endpoint-body">
+    <div class="param-section">
+      <div class="param-title">Request Body</div>
+      <div class="param-row"><span class="param-name">name</span><span class="param-type">string</span><span class="param-req">필수</span><span class="param-desc">최대 50자</span></div>
+    </div>
+    <div class="param-section">
+      <div class="param-title">Response</div>
+      <div class="response-box">{ id, name, status: "ACTIVE",<br>  createdAt }</div>
+    </div>
+  </div>
+</div>
+
+<div class="endpoint">
+  <div class="endpoint-header">
+    <span class="method get">GET</span>
+    <span class="path">/groups/:groupId</span>
+    <span class="desc">그룹 홈 조회</span>
+    <span class="auth-tag">auth</span>
+  </div>
+  <div class="endpoint-body">
+    <div class="param-section">
+      <div class="param-title">Response</div>
+      <div class="response-box">{ id, name, status, members: [{<br>  userId, displayName, totalWins,<br>  totalLosses }],<br>  activeChallenges: [Challenge],<br>  lastGameAt }</div>
+    </div>
+  </div>
+</div>
+
+<div class="endpoint">
+  <div class="endpoint-header">
+    <span class="method get">GET</span>
+    <span class="path">/groups/my</span>
+    <span class="desc">내 그룹 목록 (활성 + 휴면 분리)</span>
+    <span class="auth-tag">auth</span>
+  </div>
+  <div class="endpoint-body single">
+    <div class="param-section">
+      <div class="param-title">Response</div>
+      <div class="response-box">{ active: [Group], dormant: [Group] }</div>
+    </div>
+  </div>
+</div>
+
+<div class="endpoint">
+  <div class="endpoint-header">
+    <span class="method patch">PATCH</span>
+    <span class="path">/groups/:groupId/restore</span>
+    <span class="desc">휴면 그룹 복구</span>
+    <span class="auth-tag">auth</span>
+  </div>
+  <div class="endpoint-body single">
+    <div class="param-section">
+      <div class="param-title">Response</div>
+      <div class="response-box">{ id, name, status: "ACTIVE" }</div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== INVITE LINKS ==================== -->
+<div class="section-title">Invite Links API <span class="phase-tag p1">Phase 1</span></div>
+
+<div class="endpoint">
+  <div class="endpoint-header">
+    <span class="method post">POST</span>
+    <span class="path">/groups/:groupId/invites</span>
+    <span class="desc">초대링크 생성 (방식 A / B)</span>
+    <span class="auth-tag">auth</span>
+  </div>
+  <div class="endpoint-body">
+    <div class="param-section">
+      <div class="param-title">Request Body</div>
+      <div class="param-row"><span class="param-name">type</span><span class="param-type">string</span><span class="param-req">필수</span><span class="param-desc">SHARED | PERSONAL</span></div>
+      <div class="param-row"><span class="param-name">expiresIn</span><span class="param-type">string</span><span class="param-req">필수</span><span class="param-desc">24h | 7d</span></div>
+      <div class="param-row"><span class="param-name">members</span><span class="param-type">string[]</span><span class="param-req">선택</span><span class="param-desc">방식 B: ["철수","영희","순자"]</span></div>
+    </div>
+    <div class="param-section">
+      <div class="param-title">Response</div>
+      <div class="response-box">// 방식 A<br>{ url: "https://krrk.io/g/{token}",<br>  expiresAt }<br><br>// 방식 B<br>{ links: [{ name: "철수",<br>  url: "https://krrk.io/u/aaa1" },<br>  ...], expiresAt }</div>
+    </div>
+  </div>
+</div>
+
+<div class="endpoint">
+  <div class="endpoint-header">
+    <span class="method get">GET</span>
+    <span class="path">/invites/:token</span>
+    <span class="desc">초대링크 정보 조회 (입장 전 확인)</span>
+  </div>
+  <div class="endpoint-body">
+    <div class="param-section">
+      <div class="param-title">Response</div>
+      <div class="response-box">{ groupId, groupName, type,<br>  targetName?: "철수",<br>  isExpired, memberCount }</div>
+    </div>
+    <div class="param-section">
+      <div class="param-title">비고</div>
+      <div class="callout">방식 B: targetName이 있으면 '철수가 맞습니까?' 확인 화면 표시. 만료 시 isExpired: true.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== CHALLENGES ==================== -->
+<div class="section-title">Challenges API <span class="phase-tag p1">Phase 1</span></div>
+
+<div class="endpoint">
+  <div class="endpoint-header">
+    <span class="method post">POST</span>
+    <span class="path">/groups/:groupId/challenges</span>
+    <span class="desc">챌린지 제안 → 즉시 시작</span>
+    <span class="auth-tag">auth</span>
+  </div>
+  <div class="endpoint-body">
+    <div class="param-section">
+      <div class="param-title">Request Body</div>
+      <div class="param-row"><span class="param-name">duration</span><span class="param-type">string</span><span class="param-req">필수</span><span class="param-desc">SINGLE | WEEK | MONTH</span></div>
+      <div class="param-row"><span class="param-name">type</span><span class="param-type">string</span><span class="param-req">필수</span><span class="param-desc">LOSER_PENALTY | WINNER_BENEFIT</span></div>
+      <div class="param-row"><span class="param-name">gameType</span><span class="param-type">string</span><span class="param-req">필수</span><span class="param-desc">MARBLE_RACE | BOMB | TIMER</span></div>
+      <div class="param-row"><span class="param-name">rewardText</span><span class="param-type">string</span><span class="param-req">필수</span><span class="param-desc">벌칙/베네핏 내용. 최대 200자</span></div>
+      <div class="param-row"><span class="param-name">revealMode</span><span class="param-type">string</span><span class="param-req">필수</span><span class="param-desc">REALTIME | ON_END</span></div>
+    </div>
+    <div class="param-section">
+      <div class="param-title">Response</div>
+      <div class="response-box">{ id, groupId, duration, type,<br>  gameType, rewardText,<br>  revealMode, status: "ACTIVE",<br>  startsAt, endsAt }</div>
+    </div>
+  </div>
+</div>
+
+<div class="callout orange">BOMB 게임은 WINNER_BENEFIT 챌린지에서 선택 불가. 서버에서 validation 처리.</div>
+
+<div class="endpoint">
+  <div class="endpoint-header">
+    <span class="method get">GET</span>
+    <span class="path">/groups/:groupId/challenges</span>
+    <span class="desc">그룹 챌린지 목록</span>
+    <span class="auth-tag">auth</span>
+  </div>
+  <div class="endpoint-body">
+    <div class="param-section">
+      <div class="param-title">Query Params</div>
+      <div class="param-row"><span class="param-name">status</span><span class="param-type">string</span><span class="param-req">선택</span><span class="param-desc">ACTIVE | FINISHED | REVEALED | ARCHIVED</span></div>
+    </div>
+    <div class="param-section">
+      <div class="param-title">Response</div>
+      <div class="response-box">{ challenges: [Challenge] }</div>
+    </div>
+  </div>
+</div>
+
+<div class="endpoint">
+  <div class="endpoint-header">
+    <span class="method get">GET</span>
+    <span class="path">/challenges/:challengeId/my-status</span>
+    <span class="desc">히든 랭킹 — 내 상태만 조회</span>
+    <span class="auth-tag">auth</span>
+  </div>
+  <div class="endpoint-body single">
+    <div class="param-section">
+      <div class="param-title">Response</div>
+      <div class="response-box">{ status: "SAFE" | "DANGER" | "CRITICAL",<br>  gamesPlayed, gamesTotal,<br>  // 구체적 순위/점수 없음 }</div>
+    </div>
+  </div>
+</div>
+
+<div class="endpoint">
+  <div class="endpoint-header">
+    <span class="method post">POST</span>
+    <span class="path">/challenges/:challengeId/reveal</span>
+    <span class="desc">시즌 결과 공개 (기간 종료 후 자동 or 수동)</span>
+    <span class="auth-tag">auth</span>
+  </div>
+  <div class="endpoint-body single">
+    <div class="param-section">
+      <div class="param-title">Response</div>
+      <div class="response-box">{ rankings: [{ rank, userId, nickname,<br>  wins, losses }],<br>  mvpUserId, rewardText }<br>// Socket: season_reveal 이벤트 발송</div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== GAME SESSIONS ==================== -->
+<div class="section-title">Game Sessions API <span class="phase-tag p1">Phase 1</span></div>
+
+<div class="endpoint">
+  <div class="endpoint-header">
+    <span class="method post">POST</span>
+    <span class="path">/challenges/:challengeId/games</span>
+    <span class="desc">게임 세션 생성</span>
+    <span class="auth-tag">auth</span>
+  </div>
+  <div class="endpoint-body">
+    <div class="param-section">
+      <div class="param-title">Response</div>
+      <div class="response-box">{ sessionId, roomCode,<br>  gameType, status: "WAITING",<br>  players: [{ userId, nickname,<br>  avatarColor }] }</div>
+    </div>
+    <div class="param-section">
+      <div class="param-title">비고</div>
+      <div class="callout">생성 후 Socket join_game 이벤트로 룸 입장. 전원 ready 시 game_start 발송.</div>
+    </div>
+  </div>
+</div>
+
+<div class="endpoint">
+  <div class="endpoint-header">
+    <span class="method get">GET</span>
+    <span class="path">/games/:sessionId</span>
+    <span class="desc">게임 세션 상태 조회</span>
+    <span class="auth-tag">auth</span>
+  </div>
+  <div class="endpoint-body single">
+    <div class="param-section">
+      <div class="param-title">Response</div>
+      <div class="response-box">{ sessionId, gameType, status,<br>  players, playerOrder?,<br>  results?: [GameResult] }</div>
+    </div>
+  </div>
+</div>
+
+<div class="endpoint">
+  <div class="endpoint-header">
+    <span class="method post">POST</span>
+    <span class="path">/games/:sessionId/absent</span>
+    <span class="desc">미참여 처리 (자동 패배)</span>
+    <span class="auth-tag">auth</span>
+  </div>
+  <div class="endpoint-body single">
+    <div class="param-section">
+      <div class="param-title">비고</div>
+      <div class="callout orange">1주/1달 챌린지에서 당일 미참여 멤버 자동 패배 처리용. Cron Job에서 호출.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== SEASONS ==================== -->
+<div class="section-title">Seasons API <span class="phase-tag p3">Phase 3</span></div>
+
+<div class="endpoint">
+  <div class="endpoint-header">
+    <span class="method get">GET</span>
+    <span class="path">/groups/:groupId/seasons</span>
+    <span class="desc">그룹 시즌 히스토리</span>
+    <span class="auth-tag">auth</span>
+  </div>
+  <div class="endpoint-body single">
+    <div class="param-section">
+      <div class="param-title">Response</div>
+      <div class="response-box">{ seasons: [{ id, challengeId,<br>  mvpUserId, mvpNickname,<br>  totalGames, revealedAt,<br>  rankings: [...] }] }</div>
+    </div>
+  </div>
+</div>
+
+<div class="endpoint">
+  <div class="endpoint-header">
+    <span class="method get">GET</span>
+    <span class="path">/groups/:groupId/members/:userId/stats</span>
+    <span class="desc">멤버 누적 통계</span>
+    <span class="auth-tag">auth</span>
+  </div>
+  <div class="endpoint-body single">
+    <div class="param-section">
+      <div class="param-title">Response</div>
+      <div class="response-box">{ totalWins, totalLosses,<br>  winRate, lossRate,<br>  seasonMvpCount,<br>  recentResults: [GameResult] }</div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== SOCKET.IO ==================== -->
+<div class="section-title">Socket.IO 이벤트 상세 <span class="phase-tag p1">Phase 1</span></div>
+
+<div class="callout">연결: wss://api.krrk.io · 룸: gameSession:{sessionId} · 인증: handshake.auth.token</div>
+
+<!-- CLIENT → SERVER -->
+<div class="socket-section">
+  <div class="socket-title">Client → Server <span class="socket-dir">emit</span></div>
+
+  <div class="event-name">join_game</div>
+  <div class="event-payload">{ sessionId: string, userId: string }</div>
+
+  <div class="event-name">game_ready</div>
+  <div class="event-payload">{ sessionId: string }
+// 전원 ready 시 서버가 game_start 발송</div>
+
+  <div class="event-name">timer_stop</div>
+  <div class="event-payload">{ sessionId: string, stopIndex: 1 | 2, value: number }
+// value: 0.01초 단위 타이머 값 (예: 3.47)</div>
+
+  <div class="event-name">leave_game</div>
+  <div class="event-payload">{ sessionId: string }</div>
+</div>
+
+<!-- SERVER → CLIENT -->
+<div class="socket-section">
+  <div class="socket-title">Server → Client <span class="socket-dir">on</span></div>
+
+  <div class="event-name">game_start</div>
+  <div class="event-payload">{ sessionId, gameType, players: [{ userId, nickname, avatarColor }],
+  playerOrder?: string[]  // 타이머 게임: 랜덤 순서 userId 배열
+}</div>
+
+  <div class="event-name">game_state</div>
+  <div class="event-payload">// 구슬 레이스: 매 프레임 브로드캐스트
+{ sessionId, marbles: [{ userId, x, y, rank }] }
+
+// 폭탄 게임: 폭탄 이동 시
+{ sessionId, bombHolder: userId, timeLeft?: null, warningMode: boolean }
+
+// 타이머 게임: 현재 차례 안내
+{ sessionId, currentTurn: userId, turnIndex: number }</div>
+
+  <div class="event-name">timer_result</div>
+  <div class="event-payload">{ sessionId, userId, stopIndex: 1 | 2,
+  value: number,        // 3.47
+  lastDigit: number,    // 7
+  score?: number        // stopIndex=2일 때만: 7×2=14
+}</div>
+
+  <div class="event-name">game_end</div>
+  <div class="event-payload">{ sessionId, rankings: [{ rank, userId, nickname, score? }],
+  loserId: string,    // 꼴찌
+  winnerId: string,   // 1등
+  rewardText: string
+}</div>
+
+  <div class="event-name">season_reveal</div>
+  <div class="event-payload">{ challengeId, rankings: [{ rank, userId, nickname, wins, losses }],
+  mvpUserId, mvpNickname, rewardText,
+  cardImageUrl?: string   // Phase 4
+}</div>
+
+  <div class="event-name">bomb_explode</div>
+  <div class="event-payload">{ sessionId, loserId: string }
+// 폭발 순간 별도 이벤트. 클라이언트에서 폭발 애니메이션 트리거.</div>
+</div>
+
+<!-- ==================== ERROR CODES ==================== -->
+<div class="section-title">에러 코드</div>
+
+<div style="background:#1e293b; border:1px solid #334155; border-radius:10px; overflow:hidden;">
+  <table style="width:100%; border-collapse:collapse;">
+    <tr style="background:#0f172a;">
+      <th style="padding:10px 16px; text-align:left; color:#60a5fa; font-size:12px; width:120px;">코드</th>
+      <th style="padding:10px 16px; text-align:left; color:#60a5fa; font-size:12px; width:200px;">상황</th>
+      <th style="padding:10px 16px; text-align:left; color:#60a5fa; font-size:12px;">메시지</th>
+    </tr>
+    <tr style="border-top:1px solid #0f172a;"><td style="padding:8px 16px; font-family:monospace; color:#f87171; font-size:12px;">400</td><td style="padding:8px 16px; color:#94a3b8; font-size:12px;">잘못된 요청</td><td style="padding:8px 16px; color:#64748b; font-size:11px;">gameType BOMB은 WINNER_BENEFIT에서 사용 불가</td></tr>
+    <tr style="border-top:1px solid #0f172a;"><td style="padding:8px 16px; font-family:monospace; color:#f87171; font-size:12px;">401</td><td style="padding:8px 16px; color:#94a3b8; font-size:12px;">인증 실패</td><td style="padding:8px 16px; color:#64748b; font-size:11px;">토큰 만료 또는 유효하지 않음</td></tr>
+    <tr style="border-top:1px solid #0f172a;"><td style="padding:8px 16px; font-family:monospace; color:#f87171; font-size:12px;">403</td><td style="padding:8px 16px; color:#94a3b8; font-size:12px;">권한 없음</td><td style="padding:8px 16px; color:#64748b; font-size:11px;">그룹 멤버가 아님</td></tr>
+    <tr style="border-top:1px solid #0f172a;"><td style="padding:8px 16px; font-family:monospace; color:#f87171; font-size:12px;">404</td><td style="padding:8px 16px; color:#94a3b8; font-size:12px;">초대링크 만료</td><td style="padding:8px 16px; color:#64748b; font-size:11px;">링크가 만료되었습니다. 새 링크를 요청해주세요.</td></tr>
+    <tr style="border-top:1px solid #0f172a;"><td style="padding:8px 16px; font-family:monospace; color:#f87171; font-size:12px;">409</td><td style="padding:8px 16px; color:#94a3b8; font-size:12px;">잘못된 개인링크</td><td style="padding:8px 16px; color:#64748b; font-size:11px;">이 링크는 영희용입니다. 철수 링크로 다시 입장해주세요.</td></tr>
+    <tr style="border-top:1px solid #0f172a;"><td style="padding:8px 16px; font-family:monospace; color:#f87171; font-size:12px;">423</td><td style="padding:8px 16px; color:#94a3b8; font-size:12px;">휴면 그룹</td><td style="padding:8px 16px; color:#64748b; font-size:11px;">휴면 상태입니다. 복구 후 이용 가능합니다.</td></tr>
+  </table>
+</div>
+
+<!-- ==================== CRON ==================== -->
+<div class="section-title">Cron Jobs (NestJS @Cron)</div>
+
+<div style="background:#1e293b; border:1px solid #334155; border-radius:10px; padding:16px;">
+  <table style="width:100%; border-collapse:collapse;">
+    <tr style="background:#0f172a;">
+      <th style="padding:8px 12px; text-align:left; color:#60a5fa; font-size:12px;">Job</th>
+      <th style="padding:8px 12px; text-align:left; color:#60a5fa; font-size:12px;">주기</th>
+      <th style="padding:8px 12px; text-align:left; color:#60a5fa; font-size:12px;">동작</th>
+      <th style="padding:8px 12px; text-align:left; color:#60a5fa; font-size:12px;">Phase</th>
+    </tr>
+    <tr style="border-top:1px solid #0f172a;">
+      <td style="padding:8px 12px; font-family:monospace; color:#fbbf24; font-size:11px;">checkDormantGroups</td>
+      <td style="padding:8px 12px; color:#94a3b8; font-size:11px;">매일 새벽 1시</td>
+      <td style="padding:8px 12px; color:#64748b; font-size:11px;">lastGameAt 3개월 초과 그룹 → DORMANT 전환</td>
+      <td style="padding:8px 12px;"><span class="phase-tag p3">Phase 3</span></td>
+    </tr>
+    <tr style="border-top:1px solid #0f172a;">
+      <td style="padding:8px 12px; font-family:monospace; color:#fbbf24; font-size:11px;">processAbsentPlayers</td>
+      <td style="padding:8px 12px; color:#94a3b8; font-size:11px;">매일 자정</td>
+      <td style="padding:8px 12px; color:#64748b; font-size:11px;">당일 미참여 멤버 자동 패배 처리</td>
+      <td style="padding:8px 12px;"><span class="phase-tag p3">Phase 3</span></td>
+    </tr>
+    <tr style="border-top:1px solid #0f172a;">
+      <td style="padding:8px 12px; font-family:monospace; color:#fbbf24; font-size:11px;">revealExpiredChallenges</td>
+      <td style="padding:8px 12px; color:#94a3b8; font-size:11px;">매시간</td>
+      <td style="padding:8px 12px; color:#64748b; font-size:11px;">endsAt 지난 ACTIVE 챌린지 → REVEALED 처리 + season_reveal 발송</td>
+      <td style="padding:8px 12px;"><span class="phase-tag p3">Phase 3</span></td>
+    </tr>
+    <tr style="border-top:1px solid #0f172a;">
+      <td style="padding:8px 12px; font-family:monospace; color:#fbbf24; font-size:11px;">cleanExpiredInvites</td>
+      <td style="padding:8px 12px; color:#94a3b8; font-size:11px;">매일 새벽 2시</td>
+      <td style="padding:8px 12px; color:#64748b; font-size:11px;">만료된 invite_links 삭제</td>
+      <td style="padding:8px 12px;"><span class="phase-tag p1">Phase 1</span></td>
+    </tr>
+  </table>
+</div>
+
+</body>
+</html>
