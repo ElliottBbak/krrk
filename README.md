@@ -34,12 +34,12 @@
 
 | 문서 | 설명 |
 |---|---|
-| `docs/KRRK_Vision_v2.docx` | 서비스 비전 |
-| `docs/KRRK_Product_Master_PRD_v3.docx` | 제품 요구사항 정의서 |
-| `docs/KRRK_Challenge_Lifecycle_Bible_v2.docx` | 챌린지 라이프사이클 |
-| `docs/KRRK_Group_Lifecycle_Bible_v2.docx` | 그룹 라이프사이클 |
-| `docs/KRRK_Game_Design_Bible_v2.docx` | 게임 설계 문서 |
-| `docs/KRRK_Roadmap_v1.docx` | 개발 로드맵 |
+| `docs/KRRK_Vision.docx` | 서비스 비전 |
+| `docs/KRRK_Product_Master_PRD.docx` | 제품 요구사항 정의서 |
+| `docs/KRRK_Challenge_Lifecycle_Bible.docx` | 챌린지 라이프사이클 |
+| `docs/KRRK_Group_Lifecycle_Bible.docx` | 그룹 라이프사이클 |
+| `docs/KRRK_Game_Design_Bible.docx` | 게임 설계 문서 |
+| `docs/KRRK_Roadmap.docx` | 개발 로드맵 |
 | `docs/krrk_userflow.html` | 유저 플로우 (브라우저에서 열기) |
 | `docs/krrk_erd.html` | ERD & 데이터베이스 스키마 (브라우저에서 열기) |
 | `docs/krrk_api.html` | API Spec (브라우저에서 열기) |
