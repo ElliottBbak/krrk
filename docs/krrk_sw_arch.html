@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<title>KRRK Software Architecture</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Arial', sans-serif; background: #0f172a; color: #e2e8f0; font-size: 13px; padding: 40px; }
+
+  h1 { font-size: 36px; font-weight: 900; color: white; margin-bottom: 6px; }
+  .subtitle { color: #64748b; font-size: 14px; margin-bottom: 48px; }
+  .section-title { font-size: 18px; font-weight: 800; color: #60a5fa; margin: 48px 0 20px; padding-bottom: 8px; border-bottom: 1px solid #1e3a5f; }
+
+  .callout { background: #1e3a5f; border-left: 3px solid #2563eb; padding: 12px 16px; border-radius: 0 8px 8px 0; font-size: 12px; color: #93c5fd; line-height: 1.6; margin-bottom: 20px; }
+  .callout.green { background: #052e16; border-color: #059669; color: #6ee7b7; }
+  .callout.orange { background: #3b1f00; border-color: #d97706; color: #fcd34d; }
+
+  /* STACK */
+  .stack { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 24px; }
+  .stack-card { background: #1e293b; border: 1px solid #334155; border-radius: 8px; padding: 14px 16px; }
+  .stack-label { font-size: 10px; font-weight: 700; color: #64748b; text-transform: uppercase; margin-bottom: 4px; }
+  .stack-value { font-size: 14px; font-weight: 700; color: #60a5fa; }
+  .stack-sub { font-size: 11px; color: #475569; margin-top: 2px; }
+
+  /* MONOREPO */
+  .code-box { background: #0f172a; border: 1px solid #334155; border-radius: 8px; padding: 16px; font-family: 'Courier New', monospace; font-size: 12px; color: #94a3b8; line-height: 1.8; margin-bottom: 24px; }
+  .code-dir { color: #60a5fa; }
+  .code-file { color: #e2e8f0; }
+  .code-comment { color: #475569; }
+  .code-green { color: #34d399; }
+  .code-yellow { color: #fbbf24; }
+
+  /* TWO COL */
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 24px; }
+  .arch-card { background: #1e293b; border: 1px solid #334155; border-radius: 10px; overflow: hidden; }
+  .arch-header { background: #1e3a5f; padding: 10px 16px; font-size: 13px; font-weight: 800; color: #60a5fa; }
+  .arch-body { padding: 14px 16px; }
+  .arch-row { display: flex; gap: 8px; margin-bottom: 8px; align-items: flex-start; }
+  .arch-tag { font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 4px; white-space: nowrap; }
+  .tag-blue { background: #1e3a5f; color: #60a5fa; }
+  .tag-green { background: #064e3b; color: #34d399; }
+  .tag-yellow { background: #3b2500; color: #fbbf24; }
+  .tag-purple { background: #2e1065; color: #c4b5fd; }
+  .arch-desc { font-size: 11px; color: #94a3b8; line-height: 1.5; }
+
+  /* MODULE TABLE */
+  .module-table { width: 100%; border-collapse: collapse; background: #1e293b; border-radius: 8px; overflow: hidden; margin-bottom: 24px; }
+  .module-table th { background: #0f172a; color: #60a5fa; font-size: 11px; font-weight: 700; padding: 10px 16px; text-align: left; }
+  .module-table td { padding: 9px 16px; border-top: 1px solid #0f172a; font-size: 12px; vertical-align: top; }
+  .module-table td:first-child { font-family: monospace; color: #fbbf24; white-space: nowrap; }
+  .module-table td:nth-child(2) { color: #e2e8f0; }
+  .module-table td:last-child { color: #64748b; font-size: 11px; }
+
+  /* GAME ENGINE */
+  .game-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 24px; }
+  .game-card { background: #1e293b; border: 1px solid #334155; border-radius: 8px; padding: 14px 16px; }
+  .game-title { font-size: 13px; font-weight: 700; color: #e2e8f0; margin-bottom: 6px; }
+  .game-engine { font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 4px; display: inline-block; margin-bottom: 8px; }
+  .engine-client { background: #064e3b; color: #34d399; }
+  .engine-server { background: #1e3a5f; color: #60a5fa; }
+  .game-flow { font-size: 11px; color: #64748b; line-height: 1.7; }
+  .game-flow span { color: #94a3b8; }
+
+  /* JWT */
+  .jwt-table { width: 100%; border-collapse: collapse; background: #1e293b; border-radius: 8px; overflow: hidden; margin-bottom: 24px; }
+  .jwt-table th { background: #0f172a; color: #60a5fa; font-size: 11px; font-weight: 700; padding: 10px 16px; text-align: left; }
+  .jwt-table td { padding: 9px 16px; border-top: 1px solid #0f172a; font-size: 12px; }
+  .jwt-table td:first-child { color: #fbbf24; font-weight: 700; }
+  .jwt-table td:nth-child(2) { color: #34d399; font-family: monospace; }
+  .jwt-table td:last-child { color: #64748b; font-size: 11px; }
+
+  /* DECISION TABLE */
+  .decision-table { width: 100%; border-collapse: collapse; background: #1e293b; border-radius: 8px; overflow: hidden; margin-bottom: 24px; }
+  .decision-table th { background: #0f172a; color: #60a5fa; font-size: 11px; font-weight: 700; padding: 10px 16px; text-align: left; }
+  .decision-table td { padding: 9px 16px; border-top: 1px solid #0f172a; font-size: 12px; }
+  .decision-table td:first-child { color: #94a3b8; }
+  .decision-table td:nth-child(2) { color: #34d399; font-weight: 700; }
+  .decision-table td:last-child { color: #64748b; font-size: 11px; }
+</style>
+</head>
+<body>
+
+<h1>KRRK</h1>
+<div class="subtitle">Software Architecture · Monorepo · v1.0 · 2025</div>
+
+<!-- TECH STACK -->
+<div class="section-title">기술 스택</div>
+<div class="stack">
+  <div class="stack-card">
+    <div class="stack-label">Frontend</div>
+    <div class="stack-value">React + Vite</div>
+    <div class="stack-sub">TypeScript</div>
+  </div>
+  <div class="stack-card">
+    <div class="stack-label">상태관리</div>
+    <div class="stack-value">Zustand</div>
+    <div class="stack-sub">+ TanStack Query</div>
+  </div>
+  <div class="stack-card">
+    <div class="stack-label">Backend</div>
+    <div class="stack-value">NestJS</div>
+    <div class="stack-sub">TypeScript + TypeORM</div>
+  </div>
+  <div class="stack-card">
+    <div class="stack-label">Realtime</div>
+    <div class="stack-value">Socket.IO</div>
+    <div class="stack-sub">NestJS Gateway</div>
+  </div>
+  <div class="stack-card">
+    <div class="stack-label">Database</div>
+    <div class="stack-value">PostgreSQL</div>
+    <div class="stack-sub">TypeORM</div>
+  </div>
+  <div class="stack-card">
+    <div class="stack-label">Monorepo</div>
+    <div class="stack-value">Turborepo</div>
+    <div class="stack-sub">pnpm workspaces</div>
+  </div>
+  <div class="stack-card">
+    <div class="stack-label">Physics</div>
+    <div class="stack-value">Matter.js</div>
+    <div class="stack-sub">+ seedrandom</div>
+  </div>
+  <div class="stack-card">
+    <div class="stack-label">이미지 생성</div>
+    <div class="stack-value">html-to-image</div>
+    <div class="stack-sub">클라이언트사이드 (MVP)</div>
+  </div>
+</div>
+
+<!-- MONOREPO -->
+<div class="section-title">Monorepo 구조</div>
+<div class="code-box">
+<span class="code-dir">krrk/</span>
+├── <span class="code-dir">apps/</span>
+│   ├── <span class="code-dir">web/</span>                  <span class="code-comment"># React + Vite 프론트엔드</span>
+│   │   ├── src/
+│   │   │   ├── <span class="code-dir">pages/</span>          <span class="code-comment"># 라우트별 페이지</span>
+│   │   │   ├── <span class="code-dir">components/</span>     <span class="code-comment"># UI 컴포넌트</span>
+│   │   │   ├── <span class="code-dir">stores/</span>         <span class="code-comment"># Zustand stores</span>
+│   │   │   ├── <span class="code-dir">hooks/</span>          <span class="code-comment"># TanStack Query hooks</span>
+│   │   │   ├── <span class="code-dir">socket/</span>         <span class="code-comment"># Socket.IO 클라이언트</span>
+│   │   │   └── <span class="code-dir">games/</span>          <span class="code-comment"># 게임별 엔진 (Matter.js)</span>
+│   │   └── package.json
+│   │
+│   └── <span class="code-dir">api/</span>                  <span class="code-comment"># NestJS 백엔드</span>
+│       ├── src/
+│       │   ├── <span class="code-dir">auth/</span>           <span class="code-comment"># 게스트·토큰·소셜 인증</span>
+│       │   ├── <span class="code-dir">users/</span>          <span class="code-comment"># User 엔티티</span>
+│       │   ├── <span class="code-dir">groups/</span>         <span class="code-comment"># Group CRUD + 휴면 Cron</span>
+│       │   ├── <span class="code-dir">challenges/</span>     <span class="code-comment"># Challenge 제안·진행·종료</span>
+│       │   ├── <span class="code-dir">games/</span>          <span class="code-comment"># GameSession + 게임별 로직</span>
+│       │   ├── <span class="code-dir">gateway/</span>        <span class="code-comment"># Socket.IO Gateway</span>
+│       │   ├── <span class="code-dir">seasons/</span>        <span class="code-comment"># SeasonSummary 생성</span>
+│       │   └── <span class="code-dir">common/</span>         <span class="code-comment"># Guard, Interceptor, Pipe</span>
+│       └── package.json
+│
+├── <span class="code-dir">packages/</span>
+│   └── <span class="code-dir">shared/</span>               <span class="code-comment"># 공유 타입 + Enum만</span>
+│       ├── src/
+│       │   ├── <span class="code-file">enums.ts</span>        <span class="code-comment"># GameType, ChallengeStatus 등</span>
+│       │   └── <span class="code-file">types.ts</span>        <span class="code-comment"># DTO 타입 정의</span>
+│       └── package.json
+│
+├── <span class="code-file">turbo.json</span>
+├── <span class="code-file">package.json</span>              <span class="code-comment"># pnpm workspace root</span>
+└── <span class="code-file">pnpm-workspace.yaml</span>
+</div>
+
+<!-- FRONTEND ARCH -->
+<div class="section-title">프론트엔드 아키텍처</div>
+<div class="two-col">
+  <div class="arch-card">
+    <div class="arch-header">Zustand — 실시간 상태</div>
+    <div class="arch-body">
+      <div class="arch-row"><span class="arch-tag tag-green">gameStore</span><span class="arch-desc">현재 게임 세션 상태. 소켓 이벤트 수신 시 업데이트. 마블 위치, 폭탄 보유자, 타이머 현황.</span></div>
+      <div class="arch-row"><span class="arch-tag tag-green">authStore</span><span class="arch-desc">userId, accessToken, personalToken. localStorage에 persist.</span></div>
+      <div class="arch-row"><span class="arch-tag tag-green">socketStore</span><span class="arch-desc">소켓 연결 상태. 이벤트 핸들러 등록/해제.</span></div>
+    </div>
+  </div>
+  <div class="arch-card">
+    <div class="arch-header">TanStack Query — 서버 데이터</div>
+    <div class="arch-body">
+      <div class="arch-row"><span class="arch-tag tag-blue">useGroup</span><span class="arch-desc">그룹 홈 데이터. 멤버 목록, 활성 챌린지. 자동 캐싱.</span></div>
+      <div class="arch-row"><span class="arch-tag tag-blue">useChallenges</span><span class="arch-desc">챌린지 목록 + 상태. 폴링 또는 소켓 이벤트 시 invalidate.</span></div>
+      <div class="arch-row"><span class="arch-tag tag-blue">useMyStatus</span><span class="arch-desc">히든 랭킹 내 상태 (SAFE/DANGER/CRITICAL).</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- BACKEND MODULES -->
+<div class="section-title">NestJS 모듈 역할</div>
+<table class="module-table">
+  <tr><th>모듈</th><th>역할</th><th>주요 의존성</th></tr>
+  <tr><td>auth</td><td>게스트 입장, 개인토큰 재입장, 소셜 로그인. JWT 발급.</td><td>users, JwtModule</td></tr>
+  <tr><td>users</td><td>User 엔티티 CRUD. 토큰 기반 유저 재식별.</td><td>TypeORM</td></tr>
+  <tr><td>groups</td><td>그룹 생성/조회. 초대링크 생성(A/B). 휴면 Cron.</td><td>users, ScheduleModule</td></tr>
+  <tr><td>challenges</td><td>챌린지 제안·즉시시작. 히든랭킹 계산. 시즌 공개 Cron.</td><td>groups, games, gateway</td></tr>
+  <tr><td>games</td><td>GameSession 생성. 게임별 로직 분기 (Marble/Bomb/Timer). 결과 저장.</td><td>challenges, gateway</td></tr>
+  <tr><td>gateway</td><td>Socket.IO 이벤트 처리. 룸 관리. 게임 브로드캐스트.</td><td>games, JwtModule</td></tr>
+  <tr><td>seasons</td><td>SeasonSummary 생성. 결과 카드 URL 저장.</td><td>challenges, gateway</td></tr>
+  <tr><td>common</td><td>JwtAuthGuard, GroupMemberGuard, ResponseInterceptor, 에러 필터.</td><td>—</td></tr>
+</table>
+
+<!-- GAME ENGINE -->
+<div class="section-title">게임별 엔진 아키텍처</div>
+<div class="game-grid">
+  <div class="game-card">
+    <div class="game-title">🔵 구슬 레이스</div>
+    <div class="game-engine engine-client">클라이언트사이드</div>
+    <div class="game-flow">
+      <span>서버</span> → game_start { seed }<br>
+      <span>클라이언트</span> → Matter.js + seedrandom<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;동일 seed로 독립 실행<br>
+      <span>클라이언트</span> → 시뮬레이션 종료 후<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;rankings 서버 전송<br>
+      <span>서버</span> → game_end 브로드캐스트
+    </div>
+  </div>
+  <div class="game-card">
+    <div class="game-title">💣 폭탄 게임</div>
+    <div class="game-engine engine-server">서버사이드</div>
+    <div class="game-flow">
+      <span>서버</span> → 타이머 시작 (10~30초 랜덤)<br>
+      <span>서버</span> → 폭탄 보유자 랜덤 변경<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;game_state 브로드캐스트<br>
+      <span>서버</span> → 5초 전 경고 신호 발송<br>
+      <span>서버</span> → 타이머 종료 시<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;bomb_explode + game_end
+    </div>
+  </div>
+  <div class="game-card">
+    <div class="game-title">⏱ 타이머 게임</div>
+    <div class="game-engine engine-server">서버사이드</div>
+    <div class="game-flow">
+      <span>서버</span> → playerOrder 랜덤 확정<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;game_start 브로드캐스트<br>
+      <span>클라이언트</span> → timer_stop emit<br>
+      <span>서버</span> → timer_result 브로드캐스트<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(전원에게 값 공개)<br>
+      <span>서버</span> → 전원 완료 후 game_end
+    </div>
+  </div>
+</div>
+
+<!-- JWT -->
+<div class="section-title">JWT 인증 전략</div>
+<div class="callout orange">Refresh Token 없음. 게스트 유저 특성상 토큰 분실 시 재식별 불가이므로 복잡도 추가 불필요. 소셜 로그인(Phase 4) 때 Refresh Token 추가.</div>
+<table class="jwt-table">
+  <tr><th>유저 타입</th><th>accessToken 만료</th><th>재발급 방법</th></tr>
+  <tr><td>GUEST</td><td>30일</td><td>개인 토큰 링크 → /auth/token → 새 accessToken</td></tr>
+  <tr><td>TOKEN (개인링크)</td><td>1년</td><td>개인 링크 자체가 영구 식별자</td></tr>
+  <tr><td>SOCIAL</td><td>7일</td><td>Phase 4 때 Refresh Token 추가 예정</td></tr>
+</table>
+
+<!-- RESULT CARD -->
+<div class="section-title">결과 카드 이미지 생성</div>
+<div class="callout green">MVP (Phase 1~3): 클라이언트사이드 html-to-image. 서버 리소스 없음.<br>Phase 4: 서버사이드 Satori + resvg. PNG → S3 저장 → cardImageUrl. 카카오 공유 썸네일 미리보기 지원.</div>
+
+<!-- KEY DECISIONS -->
+<div class="section-title">핵심 아키텍처 결정 요약</div>
+<table class="decision-table">
+  <tr><th>항목</th><th>결정</th><th>이유</th></tr>
+  <tr><td>구슬 레이스 물리 엔진</td><td>클라이언트사이드 + seed</td><td>유저 입력 없음. 서버 CPU 절약. 60fps 부드러운 애니메이션.</td></tr>
+  <tr><td>상태관리</td><td>Zustand + TanStack Query</td><td>실시간 소켓 상태와 REST 서버 데이터 역할 분리.</td></tr>
+  <tr><td>JWT 전략</td><td>accessToken만 (Refresh 없음)</td><td>게스트 유저 특성. 개인 토큰 링크로 재발급 가능.</td></tr>
+  <tr><td>Monorepo 패키지</td><td>apps/web + apps/api + packages/shared</td><td>MVP에 불필요한 패키지 분리 최소화.</td></tr>
+  <tr><td>이미지 생성</td><td>클라이언트사이드 html-to-image</td><td>Phase 1~3 서버 부담 없음. Phase 4에 Satori로 전환.</td></tr>
+</table>
+
+</body>
+</html>

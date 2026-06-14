@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<title>KRRK Infrastructure Architecture</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Arial', sans-serif; background: #0f172a; color: #e2e8f0; font-size: 13px; padding: 40px; }
+
+  h1 { font-size: 36px; font-weight: 900; color: white; margin-bottom: 6px; }
+  .subtitle { color: #64748b; font-size: 14px; margin-bottom: 48px; }
+  .section-title { font-size: 18px; font-weight: 800; color: #60a5fa; margin: 48px 0 20px; padding-bottom: 8px; border-bottom: 1px solid #1e3a5f; }
+
+  .callout { background: #1e3a5f; border-left: 3px solid #2563eb; padding: 12px 16px; border-radius: 0 8px 8px 0; font-size: 12px; color: #93c5fd; line-height: 1.6; margin-bottom: 20px; }
+  .callout.green { background: #052e16; border-color: #059669; color: #6ee7b7; }
+  .callout.orange { background: #3b1f00; border-color: #d97706; color: #fcd34d; }
+
+  /* STACK CARDS */
+  .stack { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 24px; }
+  .stack-card { background: #1e293b; border: 1px solid #334155; border-radius: 8px; padding: 14px 16px; }
+  .stack-label { font-size: 10px; font-weight: 700; color: #64748b; text-transform: uppercase; margin-bottom: 4px; }
+  .stack-value { font-size: 14px; font-weight: 700; color: #60a5fa; }
+  .stack-sub { font-size: 11px; color: #475569; margin-top: 2px; }
+
+  /* EC2 BOX */
+  .ec2-box { background: #1e293b; border: 2px solid #2563eb; border-radius: 12px; padding: 24px; margin-bottom: 24px; }
+  .ec2-title { font-size: 15px; font-weight: 800; color: #60a5fa; margin-bottom: 6px; }
+  .ec2-sub { font-size: 11px; color: #64748b; margin-bottom: 20px; }
+
+  .service-row { display: flex; gap: 12px; margin-bottom: 12px; }
+  .service-card { flex: 1; background: #0f172a; border: 1px solid #334155; border-radius: 8px; padding: 12px 14px; }
+  .service-name { font-size: 13px; font-weight: 700; color: #e2e8f0; margin-bottom: 4px; }
+  .service-port { font-size: 11px; color: #a78bfa; font-family: monospace; margin-bottom: 4px; }
+  .service-desc { font-size: 11px; color: #475569; }
+
+  /* PORT TABLE */
+  .port-table { width: 100%; border-collapse: collapse; background: #1e293b; border-radius: 8px; overflow: hidden; margin-bottom: 24px; }
+  .port-table th { background: #0f172a; color: #60a5fa; font-size: 11px; font-weight: 700; padding: 10px 16px; text-align: left; }
+  .port-table td { padding: 8px 16px; border-top: 1px solid #0f172a; font-size: 12px; }
+  .port-table td:first-child { font-family: monospace; color: #fbbf24; }
+  .port-table td:nth-child(2) { color: #34d399; }
+  .port-table td:last-child { color: #64748b; }
+
+  /* NGINX */
+  .code-box { background: #0f172a; border: 1px solid #334155; border-radius: 8px; padding: 16px; font-family: 'Courier New', monospace; font-size: 12px; color: #94a3b8; line-height: 1.8; margin-bottom: 24px; }
+  .code-comment { color: #475569; }
+  .code-key { color: #60a5fa; }
+  .code-val { color: #34d399; }
+
+  /* SCALING */
+  .phase-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 24px; }
+  .phase-card { background: #1e293b; border: 1px solid #334155; border-radius: 8px; padding: 16px; }
+  .phase-label { font-size: 10px; font-weight: 700; color: #64748b; text-transform: uppercase; margin-bottom: 6px; }
+  .phase-title { font-size: 13px; font-weight: 700; color: #e2e8f0; margin-bottom: 8px; }
+  .phase-item { font-size: 11px; color: #64748b; padding: 3px 0; border-bottom: 1px solid #0f172a; }
+  .phase-item:last-child { border-bottom: none; }
+  .phase-item.active { color: #34d399; }
+
+  /* DEPLOY */
+  .deploy-steps { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+  .deploy-card { background: #1e293b; border: 1px solid #334155; border-radius: 8px; padding: 14px 16px; }
+  .deploy-title { font-size: 12px; font-weight: 700; color: #f59e0b; margin-bottom: 8px; }
+  .deploy-item { font-size: 11px; color: #94a3b8; padding: 3px 0; }
+  .deploy-cmd { font-family: monospace; color: #34d399; font-size: 11px; }
+</style>
+</head>
+<body>
+
+<h1>KRRK</h1>
+<div class="subtitle">Infrastructure Architecture · EC2 Single Instance · v1.0 · 2025</div>
+
+<!-- OVERVIEW -->
+<div class="callout">MVP 전략: 단일 EC2 인스턴스에 프론트 + 백엔드 + DB 전부 올린다. 유저가 늘면 DB → RDS, 백엔드 → 별도 인스턴스 순으로 분리한다.</div>
+
+<!-- TECH STACK -->
+<div class="section-title">인프라 스택</div>
+<div class="stack">
+  <div class="stack-card">
+    <div class="stack-label">Cloud</div>
+    <div class="stack-value">AWS EC2</div>
+    <div class="stack-sub">t3.small (2vCPU, 2GB)</div>
+  </div>
+  <div class="stack-card">
+    <div class="stack-label">OS</div>
+    <div class="stack-value">Ubuntu 22.04</div>
+    <div class="stack-sub">LTS</div>
+  </div>
+  <div class="stack-card">
+    <div class="stack-label">Reverse Proxy</div>
+    <div class="stack-value">nginx</div>
+    <div class="stack-sub">정적파일 서빙 + 프록시</div>
+  </div>
+  <div class="stack-card">
+    <div class="stack-label">Process Manager</div>
+    <div class="stack-value">pm2</div>
+    <div class="stack-sub">NestJS 프로세스 관리</div>
+  </div>
+</div>
+
+<!-- EC2 STRUCTURE -->
+<div class="section-title">EC2 인스턴스 구조</div>
+<div class="ec2-box">
+  <div class="ec2-title">EC2 · t3.small · Ubuntu 22.04</div>
+  <div class="ec2-sub">단일 인스턴스. nginx + NestJS(pm2) + PostgreSQL 전부 동일 서버.</div>
+
+  <div class="service-row">
+    <div class="service-card">
+      <div class="service-name">nginx</div>
+      <div class="service-port">:80 / :443</div>
+      <div class="service-desc">React 정적파일 서빙. /api → NestJS 프록시. SSL 종단.</div>
+    </div>
+    <div class="service-card">
+      <div class="service-name">NestJS (pm2)</div>
+      <div class="service-port">:3000</div>
+      <div class="service-desc">REST API + Socket.IO Gateway. pm2 cluster 모드. 외부 직접 접근 차단.</div>
+    </div>
+    <div class="service-card">
+      <div class="service-name">PostgreSQL</div>
+      <div class="service-port">:5432</div>
+      <div class="service-desc">로컬 연결만 허용. 외부 포트 차단. NestJS에서만 접근.</div>
+    </div>
+  </div>
+</div>
+
+<!-- PORT -->
+<div class="section-title">포트 구성</div>
+<table class="port-table">
+  <tr><th>포트</th><th>서비스</th><th>외부 접근</th><th>비고</th></tr>
+  <tr><td>22</td><td>SSH</td><td>허용 (IP 제한)</td><td>개발자 접근용. 특정 IP만 허용.</td></tr>
+  <tr><td>80</td><td>nginx HTTP</td><td>허용</td><td>HTTPS 리다이렉트.</td></tr>
+  <tr><td>443</td><td>nginx HTTPS</td><td>허용</td><td>SSL. React 서빙 + API 프록시.</td></tr>
+  <tr><td>3000</td><td>NestJS</td><td>차단</td><td>nginx에서만 내부 프록시.</td></tr>
+  <tr><td>5432</td><td>PostgreSQL</td><td>차단</td><td>로컬 연결만. NestJS에서만 접근.</td></tr>
+</table>
+
+<!-- NGINX -->
+<div class="section-title">nginx 라우팅</div>
+<div class="code-box">
+<span class="code-comment"># /etc/nginx/sites-available/krrk</span>
+
+server {
+    <span class="code-key">listen</span> <span class="code-val">443 ssl</span>;
+    <span class="code-key">server_name</span> <span class="code-val">krrk.io</span>;
+
+    <span class="code-comment"># React 정적파일 서빙</span>
+    <span class="code-key">location</span> <span class="code-val">/</span> {
+        root /var/www/krrk/web/dist;
+        try_files $uri $uri/ /index.html;
+    }
+
+    <span class="code-comment"># REST API 프록시</span>
+    <span class="code-key">location</span> <span class="code-val">/api/</span> {
+        proxy_pass http://localhost:3000/;
+    }
+
+    <span class="code-comment"># Socket.IO 프록시 (WebSocket 업그레이드 필요)</span>
+    <span class="code-key">location</span> <span class="code-val">/socket.io/</span> {
+        proxy_pass http://localhost:3000/socket.io/;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection "upgrade";
+    }
+}
+</div>
+
+<!-- SCALING -->
+<div class="section-title">스케일링 로드맵</div>
+<div class="phase-grid">
+  <div class="phase-card">
+    <div class="phase-label">현재 · MVP</div>
+    <div class="phase-title">단일 EC2</div>
+    <div class="phase-item active">EC2 t3.small</div>
+    <div class="phase-item active">nginx + NestJS + PostgreSQL</div>
+    <div class="phase-item active">pm2 단일 프로세스</div>
+    <div class="phase-item">동시 접속 ~100명</div>
+  </div>
+  <div class="phase-card">
+    <div class="phase-label">유저 증가 시</div>
+    <div class="phase-title">DB 분리</div>
+    <div class="phase-item">EC2 t3.medium으로 업그레이드</div>
+    <div class="phase-item">PostgreSQL → AWS RDS</div>
+    <div class="phase-item">pm2 cluster 모드 활성화</div>
+    <div class="phase-item">동시 접속 ~500명</div>
+  </div>
+  <div class="phase-card">
+    <div class="phase-label">서비스 성장 시</div>
+    <div class="phase-title">인스턴스 분리</div>
+    <div class="phase-item">프론트 → CloudFront + S3</div>
+    <div class="phase-item">백엔드 → 별도 EC2</div>
+    <div class="phase-item">Socket.IO → Redis Adapter</div>
+    <div class="phase-item">동시 접속 ~수천명</div>
+  </div>
+</div>
+
+<!-- DEPLOY -->
+<div class="section-title">배포 방식</div>
+<div class="callout orange">MVP는 CI/CD 없이 수동 배포. 코드 push → EC2 접속 → git pull → 빌드 → pm2 재시작.</div>
+<div class="deploy-steps">
+  <div class="deploy-card">
+    <div class="deploy-title">프론트 배포</div>
+    <div class="deploy-item deploy-cmd">cd apps/web && pnpm build</div>
+    <div class="deploy-item deploy-cmd">cp -r dist/ /var/www/krrk/web/dist/</div>
+    <div class="deploy-item" style="margin-top:8px; color:#475569;">빌드 결과물을 nginx 서빙 경로에 복사. nginx 재시작 불필요.</div>
+  </div>
+  <div class="deploy-card">
+    <div class="deploy-title">백엔드 배포</div>
+    <div class="deploy-item deploy-cmd">cd apps/api && pnpm build</div>
+    <div class="deploy-item deploy-cmd">pm2 restart krrk-api</div>
+    <div class="deploy-item" style="margin-top:8px; color:#475569;">pm2가 프로세스 재시작. 다운타임 최소화.</div>
+  </div>
+</div>
+
+</body>
+</html>
