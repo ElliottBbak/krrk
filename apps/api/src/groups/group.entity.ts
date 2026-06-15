@@ -9,6 +9,7 @@ import {
 import { GroupStatus } from '@krrk/shared';
 import { GroupMember } from './group-member.entity';
 import { InviteLink } from '../invite-links/invite-link.entity';
+import { Challenge } from '../challenges/challenge.entity';
 
 @Entity('groups')
 export class Group {
@@ -38,4 +39,7 @@ export class Group {
 
   @OneToMany(() => InviteLink, (invite) => invite.group)
   inviteLinks: InviteLink[];
+
+  @OneToMany(() => Challenge, (challenge) => challenge.group)
+  challenges: Challenge[];
 }

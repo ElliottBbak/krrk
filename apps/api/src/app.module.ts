@@ -6,10 +6,12 @@ import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
 import { GroupsModule } from './groups/groups.module';
 import { InviteLinksModule } from './invite-links/invite-links.module';
+import { ChallengesModule } from './challenges/challenges.module';
 import { User } from './users/user.entity';
 import { Group } from './groups/group.entity';
 import { GroupMember } from './groups/group-member.entity';
 import { InviteLink } from './invite-links/invite-link.entity';
+import { Challenge } from './challenges/challenge.entity';
 
 @Module({
   imports: [
@@ -23,7 +25,7 @@ import { InviteLink } from './invite-links/invite-link.entity';
         username: config.get<string>('DATABASE_USER', 'krrk'),
         password: config.get<string>('DATABASE_PASSWORD', 'krrk'),
         database: config.get<string>('DATABASE_NAME', 'krrk'),
-        entities: [User, Group, GroupMember, InviteLink],
+        entities: [User, Group, GroupMember, InviteLink, Challenge],
         synchronize: config.get<string>('NODE_ENV') !== 'production',
         logging: config.get<string>('NODE_ENV') === 'development',
       }),
@@ -33,6 +35,7 @@ import { InviteLink } from './invite-links/invite-link.entity';
     UsersModule,
     GroupsModule,
     InviteLinksModule,
+    ChallengesModule,
   ],
 })
 export class AppModule {}

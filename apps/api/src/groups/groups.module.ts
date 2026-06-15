@@ -6,12 +6,14 @@ import { GroupsService } from './groups.service';
 import { GroupsController } from './groups.controller';
 import { InviteLinksModule } from '../invite-links/invite-links.module';
 import { UsersModule } from '../users/users.module';
+import { ChallengesModule } from '../challenges/challenges.module';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([Group, GroupMember]),
     InviteLinksModule,
     UsersModule,
+    ChallengesModule,
   ],
   providers: [GroupsService],
   controllers: [GroupsController],

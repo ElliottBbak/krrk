@@ -1,4 +1,4 @@
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import api from '../lib/axios';
 
 export const useGroupHome = (groupId: string) =>
@@ -19,4 +19,10 @@ export const useInviteInfo = (token: string) =>
     queryKey: ['invite', token],
     queryFn: () => api.get(`/invites/${token}`) as Promise<any>,
     enabled: !!token,
+  });
+
+export const useCreateInvite = (groupId: string) =>
+  useMutation({
+    mutationFn: (data: { type: string; expiresIn: '24h' | '7d' }) =>
+      api.post(`/groups/${groupId}/invites`, data) as Promise<any>,
   });

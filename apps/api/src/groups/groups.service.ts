@@ -5,13 +5,13 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { GroupStatus } from '@krrk/shared';
+import { GroupStatus, InviteType } from '@krrk/shared';
 import { Group } from './group.entity';
 import { GroupMember } from './group-member.entity';
 import { CreateGroupDto } from './dto/create-group.dto';
 import { InviteLinksService } from '../invite-links/invite-links.service';
 import { CreateInviteDto } from '../invite-links/dto/create-invite.dto';
-import { InviteType } from '@krrk/shared';
+import { ChallengesService } from '../challenges/challenges.service';
 
 @Injectable()
 export class GroupsService {
@@ -21,6 +21,7 @@ export class GroupsService {
     @InjectRepository(GroupMember)
     private readonly groupMemberRepo: Repository<GroupMember>,
     private readonly inviteLinksService: InviteLinksService,
+    private readonly challengesService: ChallengesService,
   ) {}
 
   async create(userId: string, nickname: string, dto: CreateGroupDto) {
@@ -62,7 +63,7 @@ export class GroupsService {
         totalLosses: m.totalLosses,
         avatarColor: m.user.avatarColor,
       })),
-      activeChallenges: [],
+      activeChallenges: await this.challengesService.findActiveByGroup(groupId),
     };
   }
 
