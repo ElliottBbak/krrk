@@ -14,6 +14,7 @@ import {
 import { Challenge } from './challenge.entity';
 import { GroupMember } from '../groups/group-member.entity';
 import { CreateChallengeDto } from './dto/create-challenge.dto';
+import { SocketService } from '../socket/socket.service';
 
 @Injectable()
 export class ChallengesService {
@@ -22,6 +23,7 @@ export class ChallengesService {
     private readonly challengeRepo: Repository<Challenge>,
     @InjectRepository(GroupMember)
     private readonly groupMemberRepo: Repository<GroupMember>,
+    private readonly socketService: SocketService,
   ) {}
 
   async create(groupId: string, userId: string, dto: CreateChallengeDto) {
@@ -47,7 +49,9 @@ export class ChallengesService {
     });
     await this.challengeRepo.save(challenge);
 
-    return this.toDto(challenge);
+    const dto = this.toDto(challenge);
+    this.socketService.emitToGroup(groupId, 'challenge_created', dto);
+    return dto;
   }
 
   async findByGroup(groupId: string, status?: ChallengeStatus) {

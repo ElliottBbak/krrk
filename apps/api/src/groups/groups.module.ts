@@ -7,6 +7,7 @@ import { GroupsController } from './groups.controller';
 import { InviteLinksModule } from '../invite-links/invite-links.module';
 import { UsersModule } from '../users/users.module';
 import { ChallengesModule } from '../challenges/challenges.module';
+import { AuthModule } from '../auth/auth.module';
 
 @Module({
   imports: [
@@ -14,6 +15,7 @@ import { ChallengesModule } from '../challenges/challenges.module';
     InviteLinksModule,
     UsersModule,
     ChallengesModule,
+    AuthModule,
   ],
   providers: [GroupsService],
   controllers: [GroupsController],

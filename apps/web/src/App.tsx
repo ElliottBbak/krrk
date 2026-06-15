@@ -3,6 +3,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import LandingPage from './pages/LandingPage';
 import InvitePage from './pages/InvitePage';
 import GroupHomePage from './pages/GroupHomePage';
+import GamePage from './pages/GamePage';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -21,6 +22,7 @@ export default function App() {
           <Route path="/" element={<LandingPage />} />
           <Route path="/g/:token" element={<InvitePage />} />
           <Route path="/group/:groupId" element={<GroupHomePage />} />
+          <Route path="/group/:groupId/game/:challengeId" element={<GamePage />} />
         </Routes>
       </BrowserRouter>
     </QueryClientProvider>

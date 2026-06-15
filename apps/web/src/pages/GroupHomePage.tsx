@@ -1,7 +1,10 @@
-import { useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
+import { useQueryClient } from '@tanstack/react-query';
 import { useGroupHome, useCreateInvite } from '../hooks/useGroup';
 import { useCreateChallenge } from '../hooks/useChallenge';
+import { useAuthStore } from '../stores/authStore';
+import { getSocket, connectSocket } from '../socket/index';
 
 const GAME_TYPE_LABEL: Record<string, string> = {
   MARBLE_RACE: '구슬 레이스',
@@ -38,7 +41,43 @@ const DEFAULT_FORM: ChallengeForm = {
 
 export default function GroupHomePage() {
   const { groupId } = useParams<{ groupId: string }>();
+  const navigate = useNavigate();
+  const queryClient = useQueryClient();
+  const { accessToken } = useAuthStore();
   const { data: group, isLoading } = useGroupHome(groupId ?? '');
+
+  useEffect(() => {
+    if (!groupId || !accessToken) return;
+
+    const socket = getSocket();
+    socket.auth = { token: accessToken };
+
+    const joinGroup = () => {
+      socket.emit('join_group', { groupId });
+    };
+
+    if (socket.connected) {
+      joinGroup();
+    } else {
+      socket.once('connect', joinGroup);
+      connectSocket();
+    }
+
+    socket.on('challenge_created', () => {
+      queryClient.invalidateQueries({ queryKey: ['group', groupId] });
+    });
+
+    socket.on('game_invitation', ({ challengeId }: { groupId: string; challengeId: string }) => {
+      navigate(`/group/${groupId}/game/${challengeId}`);
+    });
+
+    return () => {
+      socket.off('connect', joinGroup);
+      socket.off('challenge_created');
+      socket.off('game_invitation');
+      socket.emit('leave_group', { groupId });
+    };
+  }, [groupId, accessToken, queryClient, navigate]);
 
   const [inviteUrl, setInviteUrl] = useState('');
   const [showChallengeForm, setShowChallengeForm] = useState(false);
@@ -250,7 +289,13 @@ export default function GroupHomePage() {
                     {DURATION_LABEL[c.duration]} · {REVEAL_MODE_LABEL[c.revealMode]}
                   </p>
                 </div>
-                <button style={{ padding: '6px 14px' }} disabled>
+                <button
+                  style={{ padding: '6px 14px' }}
+                  onClick={() => {
+                    const socket = getSocket();
+                    socket.emit('start_challenge_game', { groupId, challengeId: c.id });
+                  }}
+                >
                   게임 시작
                 </button>
               </div>
